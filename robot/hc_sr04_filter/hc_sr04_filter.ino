@@ -7,7 +7,7 @@
 
 enum pins {
   trigger = 9,
-  echo = 10
+  echo = 3
 };
 
 const int MAX_DIST = 400; 

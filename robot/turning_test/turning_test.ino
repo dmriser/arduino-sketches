@@ -9,24 +9,24 @@
 #include "NewPing.h"
 
 enum pins {
-  enable_a = 12,
-  enable_b = 13,
-  input_1 = 6,
-  input_2 = 5,
-  input_3 = 10,
-  input_4 = 11,
-  trigger = 9,
-  echo = 3
+  enable_a = 6,
+  enable_b = 9,
+  input_1 = 2,
+  input_2 = 3,
+  input_3 = 2,
+  input_4 = 4,
+  trigger = 10,
+  echo = 11
 };
 
-// Max dist 400cm
-NewPing sonar(pins::trigger, pins::echo, 400);
+// Max dist 500cm
+NewPing sonar(pins::trigger, pins::echo, 500);
 
 // This value is added to the left/right motor.
 // I am not sure.
-const int motorOffset = 255 - 140;
-const int motorLow = 140;
-const int motorHigh = 150;
+const int motorOffset = 0;
+const int motorLow = 100;
+const int motorHigh = 200;
 const int seconds = 1000;
 
 void setLeft() {
