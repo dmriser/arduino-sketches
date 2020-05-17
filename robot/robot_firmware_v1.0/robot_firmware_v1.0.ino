@@ -118,6 +118,7 @@ void turnRandomly(){
 }
 
 void activate(){
+  
   setForward();
   go(motor::low);
   
@@ -145,8 +146,9 @@ void activate(){
     stop();
 
     dist = globals::sonar.ping_median(medianFilterSamples);
-    stuckIter++; 
-  }  
+    stuckIter++;
+  }
+  
 }
 
 void setup() {
@@ -180,6 +182,9 @@ void loop() {
           globals::mode = modes::on;
       }
       else if (data == deactivateChar){
+          globals::mode = modes::off;  
+      }
+      else {
           globals::mode = modes::off;  
       }
   }  
