@@ -6,40 +6,30 @@
  * 
  */
 
-#include <SoftwareSerial.h>
-
 enum pins {
-  led = 13,
-  tx = 1,
-  rx = 0
+  led = 13
 };
 
 const static int b_rate = 9600;
 
-SoftwareSerial bluetooth(pins::tx, pins::rx);
-
 void setup(){
   pinMode(pins::led, OUTPUT);
-
-  // Start serial for testing.
   Serial.begin(b_rate);
-
-  // Start the bluetooth with a default
-  // baud rate defined above.  Send a 
-  // simple test message to the connected
-  // device.
-  bluetooth.begin(b_rate);
-  bluetooth.println("Arduino setup function done!");
 }
 
 
 void loop(){
 
-    if (bluetooth.available()){
-        Serial.write(bluetooth.read());
-    }
+    if (Serial.available() > 0){
+        char data = Serial.read();
 
-    if (Serial.available()){
-        bluetooth.write(Serial.read());  
+        if (data == '1'){
+            digitalWrite(pins::led, HIGH);  
+        }
+
+        else if (data == '0'){
+            digitalWrite(pins::led, LOW);  
+        }
     }
+    
 }
