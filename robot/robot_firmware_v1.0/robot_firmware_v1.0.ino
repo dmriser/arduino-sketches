@@ -27,12 +27,6 @@ enum modes {
     on = 1  
 };
 
-enum motor {
-    low = 160,
-    high = 240,
-    offset = 0  
-};
-
 // Constants, these don't change throughout
 // the execution.
 const int seconds             = 1000;
@@ -45,15 +39,21 @@ const int randomTurnMin       = 500;  // Duration of turn in milliseconds (min)
 const int randomTurnMax       = 1500; // Duration of turn in milliseconds (max)
 const int maxSonarDist        = 500;  // Distance in centimeters
 const int startDelay          = 10;   // Start delay in seconds
+const int speedMin            = 140;
+const int speedMax            = 250;
+const int speedStep           = 10;
 const char activateChar       = '1';
 const char deactivateChar     = '0';
+const char speedUpChar        = '+';
+const char slowDownChar       = '-';
 
 // Globals that can change state during
 // operation.
 
 namespace globals {
     int mode = modes::off;
-    NewPing sonar(pins::trigger, pins::echo, maxSonarDist); 
+    NewPing sonar(pins::trigger, pins::echo, maxSonarDist);
+    int speed = 140;
 }
 
 
@@ -91,14 +91,14 @@ void stop() {
 }
 
 void goFor(int speed, int timer) {
-  analogWrite(pins::enable_a, speed + motor::offset);
+  analogWrite(pins::enable_a, speed);
   analogWrite(pins::enable_b, speed);
   delay(timer);
   stop();
 }
 
 void go(int speed){
-  analogWrite(pins::enable_a, speed + motor::offset);
+  analogWrite(pins::enable_a, speed);
   analogWrite(pins::enable_b, speed); 
 }
 
@@ -114,13 +114,13 @@ void turnRandomly(){
     // Turn a random amount, usually this is between
     // a quarter turn and three quarters.  It depends
     // on the speed setting.
-    goFor(motor::low, random(randomTurnMin,randomTurnMax));
+    goFor(globals::speed, random(randomTurnMin,randomTurnMax));
 }
 
 void activate(){
   
   setForward();
-  go(motor::low);
+  go(globals::speed);
   
   int dist = globals::sonar.ping_median(medianFilterSamples);
   int stuckIter = 0;
@@ -133,7 +133,7 @@ void activate(){
     if (stuckIter > turnsBeforeReverse){
       stop();
       setReverse();
-      goFor(motor::low, reverseDuration);
+      goFor(globals::speed, reverseDuration);
       stop();
 
       stuckIter = 0;
@@ -184,8 +184,15 @@ void loop() {
       else if (data == deactivateChar){
           globals::mode = modes::off;  
       }
-      else {
-          globals::mode = modes::off;  
+      else if (data == speedUpChar){
+          if (globals::speed < speedMax){
+              globals::speed += speedStep;  
+          }  
+      }
+      else if (data == slowDownChar){
+          if (globals::speed > speedMin){
+              globals::speed -= speedStep;
+          }  
       }
   }  
 
@@ -193,6 +200,9 @@ void loop() {
   // by bluetooth.
   if (globals::mode == modes::on){
       activate();  
+  }
+  else {
+      stop();  
   }
   
 }
